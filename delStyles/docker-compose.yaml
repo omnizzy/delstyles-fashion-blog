@@ -1,0 +1,27 @@
+version: '3.1'
+services:
+  db:
+    container_name: postgresql-container
+    image: postgres:latest
+    ports:
+      - "5431:5432"
+    environment:
+      - POSTGRES_DB=delstyles
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_USER=postgres
+    volumes:
+      - /Users/blog_container:/var/lib/postgresql/data
+    restart: always
+  backend:
+    build: .
+    container_name: blog_container
+    image: blog_app
+    ports:
+      - "8087:9090"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/delstyles
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=1234
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - db
